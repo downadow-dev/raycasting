@@ -33,8 +33,8 @@ public class Main implements ApplicationListener {
     final int WIDTH = 400, HEIGHT = 200;
     final float FOV  = 1.26f; // ~72
     final float VFOV = 0.7f;  // ~40
-    final float MAXDIST = 8.4f;
-    char map[][][] = new char[20][70][70];
+    final float MAXDIST = 9.5f;
+    char map[][][] = new char[21][64][64];
     boolean forward = false, backward = false, left = false, right = false;
     boolean camUp = false, camDown = false, camLeft = false, camRight = false;
     boolean jump = false, save = false;
@@ -113,12 +113,11 @@ public class Main implements ApplicationListener {
                     final float eZ = (float)Math.sin(playerAngleZ);
                         
                     float dist = 0.0f;
-                    while(map[(int)(playerZ + eZ * dist)][(int)(playerY + eY * dist)][(int)(playerX + eX * dist)] == '.') {
+                    while(dist < MAXDIST && map[(int)(playerZ + eZ * dist)][(int)(playerY + eY * dist)][(int)(playerX + eX * dist)] == '.') {
                         dist += 0.05f;
                         if((int)(playerZ + eZ * dist) < 0 || (int)(playerZ + eZ * dist) >= map.length ||
                            (int)(playerY + eY * dist) < 0 || (int)(playerY + eY * dist) >= map[0].length ||
-                           (int)(playerX + eX * dist) < 0 || (int)(playerX + eX * dist) >= map[0][0].length ||
-                           dist > MAXDIST) return false;
+                           (int)(playerX + eX * dist) < 0 || (int)(playerX + eX * dist) >= map[0][0].length) return false;
                     }
                     
                     dist -= 0.05f;
@@ -344,13 +343,13 @@ public class Main implements ApplicationListener {
         shape.rect(0, 0, WIDTH, HEIGHT);
         
         // ray casting
-        for(int x = 0; x < WIDTH; x++) {
+        for(float x = 0; x < WIDTH; x += 1.18f) {
             final float rayAngle = playerAngle - FOV / 2 + x * (FOV / WIDTH);
             final float eX = (float)Math.cos(rayAngle);
             final float eY = (float)Math.sin(rayAngle);
             
             yLoop:
-            for(int y = 0; y < HEIGHT; y++) {
+            for(float y = 0; y < HEIGHT; y += 1.18f) {
                 final float eZ = (float)Math.sin(playerAngleZ - VFOV / 2 + y * (VFOV / HEIGHT));
                 
                 float dist = 0.0f;
@@ -370,11 +369,11 @@ public class Main implements ApplicationListener {
                     shape.setColor(new Color(0.9f, 0.9f, 0.9f, 1));
                 else
                     shape.setColor(new Color(0, 0.5f, 0, 1));
-                shape.rect(x, y, 1, 1);
+                shape.rect(x, y, 1.18f, 1.18f);
             }
         }
         
-        shape.setColor(Color.WHITE);
+        shape.setColor(Color.BLUE);
         shape.ellipse(WIDTH / 2 - 0.5f, HEIGHT / 2 - 0.5f, 1, 1);
         if(Gdx.app.getType() == Application.ApplicationType.Android) {
             shape.setColor(Color.BLACK);
